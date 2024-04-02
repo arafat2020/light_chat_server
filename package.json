@@ -29,11 +29,13 @@
     "@nestjs/websockets": "^10.2.7",
     "@prisma/client": "^5.4.2",
     "argon2": "^0.40.1",
+    "axios": "^1.6.8",
     "bson": "^6.5.0",
     "cloudinary": "^2.1.0",
     "prisma": "^5.4.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "sharp": "^0.32.5",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {
