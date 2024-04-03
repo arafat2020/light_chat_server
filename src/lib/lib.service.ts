@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import Argon2 from 'argon2';
+import * as Argon2 from "argon2";
 import { HttpStatus } from '@nestjs/common/enums'
 import { HttpException } from '@nestjs/common/exceptions'
-import cloudinary from 'cloudinary'
+import * as cloudinary from 'cloudinary'
 import { ConfigService } from "@nestjs/config/dist/config.service";
 import axios from "axios";
 import sharp from "sharp";
@@ -19,7 +19,8 @@ export class LibService {
     //******* get hased passweord *******
     async getHashed(plainStr: string): Promise<string> {
         try {
-            return await Argon2.hash(plainStr)
+            const hash = await Argon2.hash(plainStr)
+            return hash
         } catch (error) {
             console.log(error);
             throw new HttpException('Something Went Wrong', HttpStatus.INTERNAL_SERVER_ERROR)
@@ -27,7 +28,7 @@ export class LibService {
     }
 
     //******* Veryfy passweord *******
-    async VerifyPassword(HashedPassword, PlainPassword: string) {
+    async VerifyPassword(HashedPassword:string, PlainPassword: string) {
         try {
             return await Argon2.verify(HashedPassword, PlainPassword)
         } catch (error) {
@@ -45,7 +46,11 @@ export class LibService {
         });
     }
 
-    async cldUpload(url: string) {
+    async cldUpload(url: string):Promise<{
+        url:string,
+        width:number,
+        height:number
+    }> {
         await this.cldInitiate();
         try {
             const Cls = await cloudinary.v2.uploader.upload(url);
@@ -57,12 +62,15 @@ export class LibService {
             return data;
         } catch (error) {
             console.log(error);
-            throw new HttpException('Something Went Wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('Something Went Wrong or invalid img url or string', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     // _______________Cld End_______________
     // _______________Sherp Start_______________
-    async uploadWithSharp(url: string) {
+    async uploadWithSharp(url: string):Promise<{
+        isSuccess:boolean,
+        url:string|'NOT_FOUND'|'FAILED'
+    }> {
         try {
             const imgBuffer = await axios.get(url, { responseType: 'arraybuffer' });
             const imageBuffer = Buffer.from(imgBuffer.data, 'binary');

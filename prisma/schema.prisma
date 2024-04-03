@@ -13,7 +13,7 @@ model Profile {
   userId String @unique
   name String
   imageUrl String 
-  email String 
+  email String @unique
 
   servers Server[]
   members Member[]
