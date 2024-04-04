@@ -3,7 +3,7 @@ import { HeaderDto, SignInDTO, SignUpDTO } from './auth.dto';
 import { ValidationPipe } from './validation.pipe';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
-import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -21,10 +21,6 @@ export class AuthController {
 
     @UseGuards(AuthGuard)
     @Get('profile')
-    @ApiHeader({
-        name:'Authorization',
-        description:'Bearer <token>',
-    })
     @ApiBearerAuth()
     profile(@Request() req:HeaderDto){
         return req.user

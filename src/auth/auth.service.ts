@@ -42,18 +42,20 @@ export class AuthService {
 
     async signIn(email: string, password: string) {
         const user = await this.prisma.profile.findUnique({
-            where:{
-                email:email
-            }
+            where: {
+                email: email
+            },
         })
-        if (!user)  throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
-        const isVarified = await this.lib.VerifyPassword(user.passward,password)        
-        if (!isVarified)  throw new HttpException('Incorrect Password', HttpStatus.BAD_REQUEST);
-        return{
-            user,
-            access_token:  await this.jwt.signAsync(user)
+        if (!user) throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+        const isVarified = await this.lib.VerifyPassword(user.passward, password)
+        if (!isVarified) throw new HttpException('Incorrect Password', HttpStatus.BAD_REQUEST);
+        const userObj = Object.assign({}, user)
+        await delete userObj.passward
+        return {
+            userObj,
+            access_token: await this.jwt.signAsync(userObj)
         }
     }
 
-    
+
 }
