@@ -2,6 +2,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 
+
 export class SignUpDTO {
 
     @ApiProperty({
@@ -56,23 +57,32 @@ export class SignUpDTO {
 export class SignInDTO {
 
     @ApiProperty({
-        description:"Password of the user",
-        required:true
+        description: "Password of the user",
+        required: true
     })
     @IsNotEmpty({
         message: "Password is Required"
     })
-    @IsEmail({},{
-        message:"Enter a Valid Email"
+    @IsEmail({}, {
+        message: "Enter a Valid Email"
     })
-    email:string
+    email: string
 
     @ApiProperty({
-        description:"Name of the user",
-        required:true
+        description: "Name of the user",
+        required: true
     })
     @IsNotEmpty({
         message: "Name is Required"
     })
     password: string
 }
+export class HeaderDto {
+    @ApiProperty()
+    authorization: string;
+
+    @ApiProperty()
+    user:object
+  
+  }
+

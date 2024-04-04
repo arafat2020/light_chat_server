@@ -11,6 +11,15 @@ async function bootstrap() {
     .setDescription('A Backend Massaging Server')
     .setVersion('1.0')
     .addTag('Light Chat')
+    .addBearerAuth({
+      description: `[just text field] Please enter token in following format: Bearer <JWT>`,
+      name: 'Authorization',
+      bearerFormat: 'Bearer', // I`ve tested not to use this field, but the result was the same
+      scheme: 'Bearer',
+      type: 'http', // I`ve attempted type: 'apiKey' too
+      in: 'Header'
+    }
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

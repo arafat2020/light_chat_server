@@ -1,7 +1,9 @@
-import { Controller,Post,Body } from '@nestjs/common';
-import { SignInDTO, SignUpDTO } from './auth.dto';
+import { Controller,Post,Body,Get,UseGuards,Request } from '@nestjs/common';
+import { HeaderDto, SignInDTO, SignUpDTO } from './auth.dto';
 import { ValidationPipe } from './validation.pipe';
 import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
+import { ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -15,5 +17,16 @@ export class AuthController {
     @Post('signIn')
     signIn(@Body(new ValidationPipe) signUp:SignInDTO){
         return this.authService.signIn(signUp.email,signUp.password)
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('profile')
+    @ApiHeader({
+        name:'Authorization',
+        description:'Bearer <token>',
+    })
+    @ApiBearerAuth()
+    profile(@Request() req:HeaderDto){
+        return req.user
     }
 }

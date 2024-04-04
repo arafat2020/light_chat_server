@@ -32,11 +32,7 @@ export class AuthService {
             })
             return {
                 newUser,
-                access_token: await this.jwt.signAsync({
-                    _id: newUser.id,
-                    userId: newUser.userId,
-                    name: newUser.name
-                })
+                access_token: await this.jwt.signAsync(newUser)
             }
         } catch (error) {
             console.log(error);
@@ -55,11 +51,9 @@ export class AuthService {
         if (!isVarified)  throw new HttpException('Incorrect Password', HttpStatus.BAD_REQUEST);
         return{
             user,
-            access_token:  await this.jwt.signAsync({
-                _id: user.id,
-                userId: user.userId,
-                name: user.name
-            })
+            access_token:  await this.jwt.signAsync(user)
         }
     }
+
+    
 }
