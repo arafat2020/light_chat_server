@@ -35,25 +35,35 @@ export class AuthService {
                 access_token: await this.jwt.signAsync(newUser)
             }
         } catch (error) {
-            console.log(error);
-            throw new HttpException('Something Went Wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+            await this.lib.deleteImage(img.public_id)
+            throw new HttpException({
+                msg: 'Something went wrong',
+                obj: error
+            }, HttpStatus.INTERNAL_SERVER_ERROR,)
         }
     }
 
     async signIn(email: string, password: string) {
-        const user = await this.prisma.profile.findUnique({
-            where: {
-                email: email
-            },
-        })
-        if (!user) throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
-        const isVarified = await this.lib.VerifyPassword(user.passward, password)
-        if (!isVarified) throw new HttpException('Incorrect Password', HttpStatus.BAD_REQUEST);
-        const userObj = Object.assign({}, user)
-        await delete userObj.passward
-        return {
-            userObj,
-            access_token: await this.jwt.signAsync(userObj)
+        try {
+            const user = await this.prisma.profile.findUnique({
+                where: {
+                    email: email
+                },
+            })
+            if (user == null) return new HttpException('User Not Found', HttpStatus.NOT_FOUND);
+            const isVarified = await this.lib.VerifyPassword(user.passward, password)
+            if (!isVarified) return new HttpException('Incorrect Password', HttpStatus.BAD_REQUEST);
+            const userObj = Object.assign({}, user)
+            await delete userObj.passward
+            return {
+                userObj,
+                access_token: await this.jwt.signAsync(userObj)
+            }
+        } catch (error) {
+            throw new HttpException({
+                msg: 'Something went wrong',
+                obj: error
+            }, HttpStatus.INTERNAL_SERVER_ERROR,)
         }
     }
 

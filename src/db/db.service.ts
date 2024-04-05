@@ -9,6 +9,6 @@ export class DbService extends PrismaClient{
         super()
     }
     getObjId(){
-        return new ObjectId
+        return new ObjectId 
     }
 }

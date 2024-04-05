@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new HttpException("Token Not Provided",404);
+      throw new HttpException("Token Not Provided",401);
     }
     try {
       const payload = await this.jwtService.verifyAsync(

@@ -22,18 +22,22 @@ export class LibService {
             const hash = await Argon2.hash(plainStr)
             return hash
         } catch (error) {
-            console.log(error);
-            throw new HttpException('Something Went Wrong', HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({
+                msg: 'Something went wrong',
+                obj: error
+            }, HttpStatus.INTERNAL_SERVER_ERROR,)
         }
     }
 
     //******* Veryfy passweord *******
-    async VerifyPassword(HashedPassword:string, PlainPassword: string) {
+    async VerifyPassword(HashedPassword: string, PlainPassword: string) {
         try {
             return await Argon2.verify(HashedPassword, PlainPassword)
         } catch (error) {
-            console.log(error);
-            throw new HttpException('Something Went Wrong', HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException({
+                msg: 'Something went wrong',
+                obj: error
+            }, HttpStatus.INTERNAL_SERVER_ERROR,)
         }
     }
     // _______________argon End_______________
@@ -46,10 +50,11 @@ export class LibService {
         });
     }
 
-    async cldUpload(url: string):Promise<{
-        url:string,
-        width:number,
-        height:number
+    async cldUpload(url: string): Promise<{
+        url: string,
+        width: number,
+        height: number,
+        public_id:string
     }> {
         await this.cldInitiate();
         try {
@@ -57,19 +62,28 @@ export class LibService {
             const data = {
                 url: Cls.url,
                 width: Cls.width,
-                height: Cls.height
+                height: Cls.height,
+                public_id:Cls.public_id
             };
             return data;
         } catch (error) {
-            console.log(error);
-            throw new HttpException('Something Went Wrong or invalid img url or string', HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException({
+                msg: 'Something Went Wrong or invalid img url or string',
+                obj: error
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    async deleteImage(public_id:string) {
+        await this.cldInitiate()
+        await cloudinary.v2.uploader.destroy(public_id,res=>{
+            console.log('delete',res);
+        })
     }
     // _______________Cld End_______________
     // _______________Sherp Start_______________
-    async uploadWithSharp(url: string):Promise<{
-        isSuccess:boolean,
-        url:string|'NOT_FOUND'|'FAILED'
+    async uploadWithSharp(url: string): Promise<{
+        isSuccess: boolean,
+        url: string | 'NOT_FOUND' | 'FAILED'
     }> {
         try {
             const imgBuffer = await axios.get(url, { responseType: 'arraybuffer' });

@@ -7,6 +7,7 @@ import { ChatGetWayGateway } from './chat-get-way/chat-get-way.gateway';
 import { AuthModule } from './auth/auth.module';
 import { LibModule } from './lib/lib.module';
 import { ConfigModule } from '@nestjs/config';
+import { ServerModule } from './server/server.module';
 
 
 @Module({
@@ -18,7 +19,8 @@ import { ConfigModule } from '@nestjs/config';
     LibModule,
     ConfigModule.forRoot({
       isGlobal:true
-    })
+    }),
+    ServerModule
   ],
   controllers: [AppController],
   providers: [AppService, NotifyGateway, ChatGetWayGateway],
