@@ -1,9 +1,9 @@
-import { Controller, UseGuards, Post, Body, Request, Patch, Get, Delete } from '@nestjs/common';
+import { Controller, UseGuards, Post, Body, Request, Patch, Get, Delete,Query } from '@nestjs/common';
 import { ServerService } from './server.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ValidationPipe } from 'src/auth/validation.pipe';
 import { ServerDTO_create, ServerDTO_delete_and_get, ServerDTO_update } from './server.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard)
 @Controller('server')
@@ -33,7 +33,7 @@ export class ServerController {
 
     @Get('get')
     @ApiBearerAuth()
-    get(@Body(new ValidationPipe) server: ServerDTO_delete_and_get, @Request() req) {
+    get(@Query(new ValidationPipe) server: ServerDTO_delete_and_get, @Request() req) {
         return this.serverService.getServer({
             serverId: server.serverId,
             user: req.user

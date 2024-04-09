@@ -57,7 +57,9 @@ export class AuthService {
             await delete userObj.passward
             return {
                 userObj,
-                access_token: await this.jwt.signAsync(userObj)
+                access_token: await this.jwt.signAsync(userObj,{
+                    expiresIn:'7d'
+                })
             }
         } catch (error) {
             throw new HttpException({
