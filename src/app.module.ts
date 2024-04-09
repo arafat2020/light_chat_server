@@ -3,11 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { NotifyGateway } from './notify/notify.gateway';
-import { ChatGetWayGateway } from './chat-get-way/chat-get-way.gateway';
 import { AuthModule } from './auth/auth.module';
 import { LibModule } from './lib/lib.module';
 import { ConfigModule } from '@nestjs/config';
 import { ServerModule } from './server/server.module';
+import { EmailModule } from './email/email.module';
+import { ChannelModule } from './channel/channel.module';
+import { MemberModule } from './member/member.module';
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 
 @Module({
@@ -20,9 +24,14 @@ import { ServerModule } from './server/server.module';
     ConfigModule.forRoot({
       isGlobal:true
     }),
-    ServerModule
+    ServerModule,
+    EmailModule,
+    ChannelModule,
+    MemberModule,
+    MessageModule,
+    ConversationModule
   ],
   controllers: [AppController],
-  providers: [AppService, NotifyGateway, ChatGetWayGateway],
+  providers: [AppService, NotifyGateway],
 })
 export class AppModule {}

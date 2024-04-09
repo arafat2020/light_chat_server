@@ -58,19 +58,21 @@ export class SignInDTO {
 
     @ApiProperty({
         description: "Password of the user",
-        required: true
+        required: true,
+        default:'string4@gmail.com'
     })
     @IsNotEmpty({
-        message: "Password is Required"
+        message: "Password is Required",
     })
     @IsEmail({}, {
-        message: "Enter a Valid Email"
+        message: "Enter a Valid Email",
     })
     email: string
 
     @ApiProperty({
         description: "Name of the user",
-        required: true
+        required: true,
+        default:'string'
     })
     @IsNotEmpty({
         message: "Name is Required"
