@@ -24,7 +24,7 @@ import {
 export class ConversationController {
     constructor(private conversetionService: ConversationService) { }
 
-    @Get('get')
+    @Post('get')
     @ApiBearerAuth()
     get(@Body(new ValidationPipe) credential: GetOrCreateConversationDTO) {
         return this.conversetionService.getOrCreateConversation({

@@ -34,6 +34,9 @@ export class ChannelService {
                             type,
                         }
                     }
+                },
+                include:{
+                    channels:true
                 }
             });
             return server

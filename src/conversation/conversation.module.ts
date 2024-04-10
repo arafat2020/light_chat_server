@@ -12,10 +12,10 @@ export class ConversationModule implements NestModule {
     consumer
       .apply(ConversationMiddleware)
       .forRoutes({
-        path:'update',
+        path:'conversation/update',
         method:RequestMethod.PATCH
       },{
-        path:'delete',
+        path:'conversation/delete',
         method:RequestMethod.DELETE
       });
   }

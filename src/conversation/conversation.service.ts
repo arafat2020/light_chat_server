@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Profile } from '@prisma/client';
 import { DbService } from 'src/db/db.service';
 import { HttpException } from '@nestjs/common/exceptions';
@@ -34,19 +34,22 @@ export class ConversationService {
                         }
                     }
                 });
-            } catch {
-                return null;
+            } catch (error) {
+                throw new HttpException({
+                    msg: 'something went wrong (find)',
+                    obj: error
+                }, HttpStatus.BAD_REQUEST)
             }
         }
 
         const createNewConversation = async (memberOneId: string, memberTwoId: string) => {
-
+            console.log(memberOneId,memberTwoId);
             try {
                 return await this.prisma.conversation.create({
                     data: {
                         id: `${this.prisma.getObjId()}`,
-                        memberOneId,
                         memberTwoId,
+                        memberOneId,
                     },
                     include: {
                         memberOne: {
@@ -61,15 +64,19 @@ export class ConversationService {
                         }
                     }
                 })
-            } catch {
-                return null;
+            } catch (error) {
+                console.log(error);
+                throw new HttpException({
+                    msg: 'something went wrong (create)',
+                    obj: error
+                }, HttpStatus.BAD_REQUEST)
             }
         }
-        let conversation = await findConversation(memberOneId, memberTwoId) || await findConversation(memberTwoId, memberOneId);
+        const conversation = await findConversation(memberOneId, memberTwoId) || await findConversation(memberTwoId, memberOneId);
 
-        if (!conversation) {
-            conversation = await createNewConversation(memberOneId, memberTwoId);
-        }
+        if (!conversation) return await createNewConversation(memberOneId, memberTwoId);
+        
+        console.log(conversation)
 
         return conversation;
     }

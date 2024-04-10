@@ -44,10 +44,16 @@ export class ConversationDTO_update {
     content: string
 
     @ApiProperty({
-        description:"Obj ID of the direct meddage"
+        description:"Obj ID of the direct message"
     })
     @IsNotEmpty()
     directMessageId: string
+
+    @ApiProperty({
+        description:"Obj ID of the conversation"
+    })
+    @IsNotEmpty()
+    conversationId:string
 }
 
 export class ConversationDTO_delete {

@@ -22,9 +22,9 @@ export class MessageDTO_create {
     content: string
 
     @ApiProperty({
-        description: "File ulr if you want to share"
+        description: "File ulr if you want to share",
+        required:false
     })
-    @IsNotEmpty()
     fileUrl: string | undefined
 
 }
