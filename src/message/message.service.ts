@@ -3,10 +3,14 @@ import { DbService } from 'src/db/db.service';
 import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Member, MemberRole, Message, Profile } from '@prisma/client';
+import { MessageGateway } from './message.gateway';
 
 @Injectable()
 export class MessageService {
-    constructor(private prisma: DbService) {
+    constructor(
+        private prisma: DbService,
+        private getWay: MessageGateway
+    ) {
         this.prisma.init()
     }
 
@@ -64,25 +68,25 @@ export class MessageService {
         }
     }
 
-    async get({channelId}:{channelId:string}) {
+    async get({ channelId }: { channelId: string }) {
         try {
             const messages = await this.prisma.message.findMany({
                 take: 10,
                 where: {
-                  channelId,
+                    channelId,
                 },
                 include: {
-                  member: {
-                    include: {
-                      profile: true,
+                    member: {
+                        include: {
+                            profile: true,
+                        }
                     }
-                  }
                 },
                 orderBy: {
-                  createdAt: "desc",
+                    createdAt: "desc",
                 }
-              });
-              return messages
+            });
+            return messages
         } catch (error) {
             throw new HttpException({
                 msg: 'something went wrong'
@@ -90,7 +94,7 @@ export class MessageService {
         }
     }
 
-    async create({ serverId, user, channelId, content, fileUrl }: { serverId: string, user: Profile, channelId: string, content: string, fileUrl: string|undefined, }) {
+    async create({ serverId, user, channelId, content, fileUrl }: { serverId: string, user: Profile, channelId: string, content: string, fileUrl: string | undefined, }) {
         try {
             const member = await this.isServerExistandMemverExist({
                 serverId,
@@ -116,6 +120,11 @@ export class MessageService {
                     }
                 }
             });
+            this.getWay.broadCastMessage({
+                channelId:message.channelId,
+                payload:message,
+                type:'create'
+            })
             return message
         } catch (error) {
             throw new HttpException({
@@ -164,6 +173,7 @@ export class MessageService {
                 },
                 data: {
                     content,
+                    updatedAt: new Date().toISOString()
                 },
                 include: {
                     member: {
@@ -172,6 +182,11 @@ export class MessageService {
                         }
                     }
                 }
+            })
+            this.getWay.broadCastMessage({
+                channelId:message.channelId,
+                payload:message,
+                type:'update'
             })
             return message
         } catch (error) {
@@ -231,6 +246,11 @@ export class MessageService {
                         }
                     }
                 }
+            })
+            this.getWay.broadCastMessage({
+                channelId:message.channelId,
+                payload:message,
+                type:'delete'
             })
             return message
         } catch (error) {

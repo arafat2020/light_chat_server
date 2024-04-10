@@ -3,10 +3,14 @@ import { Profile } from '@prisma/client';
 import { DbService } from 'src/db/db.service';
 import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
+import { ConversationGateway } from './conversation.gateway';
 
 @Injectable()
 export class ConversationService {
-    constructor(private prisma: DbService) {
+    constructor(
+        private prisma: DbService,
+        private getWay: ConversationGateway
+    ) {
         this.prisma.init()
     }
 
@@ -43,7 +47,7 @@ export class ConversationService {
         }
 
         const createNewConversation = async (memberOneId: string, memberTwoId: string) => {
-            console.log(memberOneId,memberTwoId);
+            console.log(memberOneId, memberTwoId);
             try {
                 return await this.prisma.conversation.create({
                     data: {
@@ -75,7 +79,7 @@ export class ConversationService {
         const conversation = await findConversation(memberOneId, memberTwoId) || await findConversation(memberTwoId, memberOneId);
 
         if (!conversation) return await createNewConversation(memberOneId, memberTwoId);
-        
+
         console.log(conversation)
 
         return conversation;
@@ -134,6 +138,11 @@ export class ConversationService {
                     }
                 }
             });
+            this.getWay.boradcastConversation({
+                conversationId: message.conversationId,
+                pyaload: message,
+                type:'create'
+            })
             return message
         } catch (error) {
             throw new HttpException({
@@ -161,6 +170,11 @@ export class ConversationService {
                     }
                 }
             })
+            this.getWay.boradcastConversation({
+                conversationId: directMessage.conversationId,
+                pyaload: directMessage,
+                type:'update'
+            })
             return directMessage
         } catch (error) {
             throw new HttpException({
@@ -171,25 +185,30 @@ export class ConversationService {
     }
     // -----------------------------------One to one massage update end----------------------------------------
     // -----------------------------------One to one massage delete start----------------------------------------
-    async delete({directMessageId}:{directMessageId:string}) {
+    async delete({ directMessageId }: { directMessageId: string }) {
         try {
-           const directMessage = await this.prisma.directMessage.update({
+            const directMessage = await this.prisma.directMessage.update({
                 where: {
-                  id: directMessageId ,
+                    id: directMessageId,
                 },
                 data: {
-                  fileUrl: null,
-                  content: "This message has been deleted.",
-                  deleted: true,
+                    fileUrl: null,
+                    content: "This message has been deleted.",
+                    deleted: true,
                 },
                 include: {
-                  member: {
-                    include: {
-                      profile: true,
+                    member: {
+                        include: {
+                            profile: true,
+                        }
                     }
-                  }
                 }
-              })
+            })
+            this.getWay.boradcastConversation({
+                conversationId: directMessage.conversationId,
+                pyaload: directMessage,
+                type:'delete'
+            })
             return directMessage
         } catch (error) {
             throw new HttpException({

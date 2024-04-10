@@ -2,9 +2,10 @@ import { Module,NestModule,MiddlewareConsumer,RequestMethod } from '@nestjs/comm
 import { ConversationService } from './conversation.service';
 import { ConversationController } from './conversation.controller';
 import { ConversationMiddleware } from './conversation.middleware';
+import { ConversationGateway } from './conversation.gateway';
 
 @Module({
-  providers: [ConversationService],
+  providers: [ConversationService, ConversationGateway],
   controllers: [ConversationController]
 })
 export class ConversationModule implements NestModule {
