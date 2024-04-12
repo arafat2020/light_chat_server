@@ -12,12 +12,13 @@ import { ChannelModule } from './channel/channel.module';
 import { MemberModule } from './member/member.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { join } from 'path';
 
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: './src/client',
+      rootPath: join(__dirname, '..', 'client'),
     }),
     AuthModule,
     LibModule,

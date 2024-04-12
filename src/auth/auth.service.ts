@@ -4,6 +4,7 @@ import { LibService } from 'src/lib/lib.service';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 
 
@@ -12,7 +13,8 @@ export class AuthService {
     constructor(
         private prisma: DbService,
         private lib: LibService,
-        private jwt: JwtService
+        private jwt: JwtService,
+        private config:ConfigService
     ) { }
 
     async signUp(name: string, password: string, email: string, imgUrl: string, userId: string,) {
@@ -32,7 +34,10 @@ export class AuthService {
             })
             return {
                 newUser,
-                access_token: await this.jwt.signAsync(newUser)
+                access_token: await this.jwt.signAsync(newUser,{
+                    secret: this.config.get("JWT_SECRET"),
+                    expiresIn:'7d'
+                })
             }
         } catch (error) {
             await this.lib.deleteImage(img.public_id)
@@ -58,6 +63,7 @@ export class AuthService {
             return {
                 userObj,
                 access_token: await this.jwt.signAsync(userObj,{
+                    secret: this.config.get("JWT_SECRET"),
                     expiresIn:'7d'
                 })
             }
