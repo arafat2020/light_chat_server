@@ -6,11 +6,13 @@ import { HttpStatus } from '@nestjs/common/enums';
 
 @Injectable()
 export class ChannelService {
-    constructor(private prisma: DbService) { }
+    constructor(private prisma: DbService) {
+        this.prisma.init()
+    }
 
     // -----------------------------------channel create start----------------------------------------
     async channelCreate({ serverId, user, name, type = ChannelType.TEXT }: { serverId: string, user: Profile, name: string, type: ChannelType }) {
-        await this.prisma.$connect()
+
         if (name == "general") throw new HttpException('Chennal General is already exist', HttpStatus.BAD_REQUEST)
         try {
             const server = await this.prisma.server.update({
@@ -35,8 +37,8 @@ export class ChannelService {
                         }
                     }
                 },
-                include:{
-                    channels:true
+                include: {
+                    channels: true
                 }
             });
             return server
@@ -50,7 +52,7 @@ export class ChannelService {
     // -----------------------------------channel create end----------------------------------------
     // -----------------------------------channel update start----------------------------------------
     async channelUpdate({ serverId, user, name, type, channelId }: { serverId: string, user: Profile, name: string | undefined, type: ChannelType | undefined, channelId: string }) {
-        await this.prisma.$connect()
+
         if (name === "general") throw new HttpException('Chennal General cannot be u[dated', HttpStatus.BAD_REQUEST)
         try {
             const server = await this.prisma.server.update({
@@ -93,7 +95,7 @@ export class ChannelService {
     // -----------------------------------chennal update end----------------------------------------
     // -----------------------------------chennal delete start----------------------------------------
     async chennelDelete({ serverId, user, channelId }: { serverId: string, user: Profile, channelId: string }) {
-        await this.prisma.$connect()
+
         try {
             const server = await this.prisma.server.update({
                 where: {
@@ -129,7 +131,7 @@ export class ChannelService {
     // -----------------------------------chennal delete end----------------------------------------
     // -----------------------------------Get chennals start----------------------------------------
     async getCannels({ serverId }: { serverId: string }) {
-        await this.prisma.$connect()
+
         try {
             const server = await this.prisma.server.findUnique({
                 where: {

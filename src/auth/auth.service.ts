@@ -15,13 +15,14 @@ export class AuthService {
         private lib: LibService,
         private jwt: JwtService,
         private config:ConfigService
-    ) { }
+    ) {
+        this.prisma.init()
+     }
 
     async signUp(name: string, password: string, email: string, imgUrl: string, userId: string,) {
         const img = await this.lib.cldUpload(imgUrl)
         const hasedPassword = await this.lib.getHashed(password)
         try {
-            await this.prisma.$connect()
             const newUser = await this.prisma.profile.create({
                 data: {
                     id: `${this.prisma.getObjId()}`,

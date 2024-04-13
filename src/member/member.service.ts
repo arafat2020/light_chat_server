@@ -4,10 +4,12 @@ import { DbService } from 'src/db/db.service';
 
 @Injectable()
 export class MemberService {
-    constructor(private prisma: DbService) { }
+    constructor(private prisma: DbService) {
+        this.prisma.init()
+     }
 
     async join({ inviteCode, user }: { inviteCode: string, user: Profile }) {
-        await this.prisma.$connect()
+         
         try {
             const existingServer = await this.prisma.server.findFirst({
                 where: {
@@ -45,7 +47,7 @@ export class MemberService {
     }
 
     async update({ serverId, user, memberId, role }: { serverId: string, user: Profile, memberId: string, role: MemberRole }) {
-        await this.prisma.$connect()
+         
         try {
             const server = await this.prisma.server.update({
                 where: {
@@ -88,7 +90,7 @@ export class MemberService {
     }
 
     async kickout({ serverId, user, memberId }: { serverId: string, user: Profile, memberId: string }) {
-        await this.prisma.$connect()
+         
         try {
             const server = await this.prisma.server.update({
                 where: {

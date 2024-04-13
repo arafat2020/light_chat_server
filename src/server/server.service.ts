@@ -10,7 +10,9 @@ export class ServerService {
     constructor(
         private prisma: DbService,
         private lib: LibService
-    ) { }
+    ) {
+        this.prisma.init()
+     }
 
     generateRandomString(length: number): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -24,7 +26,7 @@ export class ServerService {
 
     // -----------------------------------server create start----------------------------------------
     async createServer({ serverName, serverImg, user }: { serverName: string, serverImg: string, user: Profile }): Promise<Server> {
-        await this.prisma.$connect()
+         
         const img = await this.lib.cldUpload(serverImg)
         try {
             const server = await this.prisma.server.create({
@@ -66,7 +68,7 @@ export class ServerService {
     // -----------------------------------server delete start----------------------------------------
 
     async deleteServer({ serverId, user }: { serverId: string, user: Profile }) {
-        await this.prisma.$connect()
+         
         try {
             const server = await this.prisma.server.delete({
                 where: {
@@ -85,7 +87,7 @@ export class ServerService {
     // -----------------------------------server create end----------------------------------------
     // -----------------------------------server upadte start----------------------------------------
     async updateServer({ serverId, user, name, imageUrl }: { name: string | undefined, imageUrl: string | undefined, serverId: string, user: Profile }) {
-        await this.prisma.$connect()
+         
         const img = imageUrl ? await this.lib.cldUpload(imageUrl) : null
         try {
             const server = await this.prisma.server.update({
@@ -110,7 +112,7 @@ export class ServerService {
     // -----------------------------------server upadte end----------------------------------------
     // ----------------------------------- get servers start----------------------------------------
     async getServer({ serverId, user }: { serverId: string, user: Profile }) {
-        await this.prisma.$connect()
+         
         try {
             const server = await this.prisma.server.findUnique({
                 where: {
@@ -143,7 +145,7 @@ export class ServerService {
     // ----------------------------------- get servers end----------------------------------------
     // ----------------------------------- leave from server start----------------------------------------
     async leaveServer({ serverId, user }: { serverId: string, user: Profile }) {
-        await this.prisma.$connect()
+         
         try {
             const server = await this.prisma.server.update({
                 where: {
@@ -176,7 +178,7 @@ export class ServerService {
     // ----------------------------------- leave from server end----------------------------------------
     // ----------------------------------- Get all u=involved server start----------------------------------------
     async getInvovesServers(user: Profile) {
-        await this.prisma.$connect()
+         
         try {
             const servers = await this.prisma.server.findMany({
                 where: {
