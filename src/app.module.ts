@@ -13,6 +13,7 @@ import { MemberModule } from './member/member.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { join } from 'path';
+import { UpdateModule } from './update/update.module';
 
 
 @Module({
@@ -30,7 +31,8 @@ import { join } from 'path';
     ChannelModule,
     MemberModule,
     MessageModule,
-    ConversationModule
+    ConversationModule,
+    UpdateModule
   ],
   controllers: [AppController],
   providers: [AppService, NotifyGateway],
