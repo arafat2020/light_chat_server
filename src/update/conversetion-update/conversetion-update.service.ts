@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ConversetionUpdateService {
@@ -16,10 +16,9 @@ export class ConversetionUpdateService {
             const up = await this.prisma.directMessage.update({
                 where:{
                     id:e.id,
-                    uuid:null
                 },
                 data:{
-                    uuid:uuid()
+                    uuid: uuid()
                 }
             })
             console.log(up);

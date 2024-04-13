@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DbService } from 'src/db/db.service';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class MsgUpdateService {
