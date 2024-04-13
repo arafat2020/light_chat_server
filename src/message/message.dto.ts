@@ -27,6 +27,11 @@ export class MessageDTO_create {
     })
     fileUrl: string | undefined
 
+    @ApiProperty({
+        description: "uuid of a massage"
+    })
+    @IsNotEmpty()
+    uuid: string
 }
 
 export class MessageDTO_update {

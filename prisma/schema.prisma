@@ -8,6 +8,13 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum ProvidorType {
+  GOOGLE
+  NATIVE
+  GITHUB
+  FACEBOOK
+}
+
 model Profile {
   id       String @id @map("_id")
   userId   String @unique
@@ -19,9 +26,10 @@ model Profile {
   members  Member[]
   channels Channel[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   passward  String?
+  providor  ProvidorType @default(NATIVE)
 }
 
 model Server {
@@ -66,6 +74,7 @@ model Member {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isaActive Boolean @default(false)
 
   @@index([profileId])
   @@index([serverId])
@@ -100,7 +109,7 @@ model Channel {
 model Message {
   id      String  @id @map("_id")
   content String
-  u_id    String @unique
+  u_id    String  @unique
   fileUrl String?
 
   memberId String
@@ -137,6 +146,7 @@ model DirectMessage {
   id      String  @id @map("_id")
   content String
   fileUrl String?
+  uuid    String?
 
   memberId String
   member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)

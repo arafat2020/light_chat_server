@@ -40,7 +40,8 @@ export class MessageController {
             content: credential.content,
             fileUrl: credential.fileUrl,
             serverId: credential.serverId,
-            user: req.user
+            user: req.user,
+            uuid: credential.uuid
         })
     }
 

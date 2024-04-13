@@ -94,7 +94,21 @@ export class MessageService {
         }
     }
 
-    async create({ serverId, user, channelId, content, fileUrl }: { serverId: string, user: Profile, channelId: string, content: string, fileUrl: string | undefined, }) {
+    async create({
+        serverId,
+        user,
+        channelId,
+        content,
+        fileUrl,
+        uuid 
+    }: {
+            serverId: string,
+            user: Profile,
+            channelId: string,
+            content: string,
+            fileUrl: string | undefined,
+            uuid:string
+        }) {
         try {
             const member = await this.isServerExistandMemverExist({
                 serverId,
@@ -111,6 +125,7 @@ export class MessageService {
                     fileUrl,
                     channelId: channelId as string,
                     memberId: member.id,
+                    u_id:uuid
                 },
                 include: {
                     member: {
@@ -121,9 +136,9 @@ export class MessageService {
                 }
             });
             this.getWay.broadCastMessage({
-                channelId:message.channelId,
-                payload:message,
-                type:'create'
+                channelId: message.channelId,
+                payload: message,
+                type: 'create'
             })
             return message
         } catch (error) {
@@ -184,9 +199,9 @@ export class MessageService {
                 }
             })
             this.getWay.broadCastMessage({
-                channelId:message.channelId,
-                payload:message,
-                type:'update'
+                channelId: message.channelId,
+                payload: message,
+                type: 'update'
             })
             return message
         } catch (error) {
@@ -248,9 +263,9 @@ export class MessageService {
                 }
             })
             this.getWay.broadCastMessage({
-                channelId:message.channelId,
-                payload:message,
-                type:'delete'
+                channelId: message.channelId,
+                payload: message,
+                type: 'delete'
             })
             return message
         } catch (error) {
