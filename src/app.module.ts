@@ -12,10 +12,8 @@ import { ChannelModule } from './channel/channel.module';
 import { MemberModule } from './member/member.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import { UpdateModule } from './update/update.module';
-import { RenderModule } from 'nest-next';
-import Next from 'next';
 
 
 @Module({
@@ -34,8 +32,6 @@ import Next from 'next';
     MemberModule,
     MessageModule,
     ConversationModule,
-    UpdateModule,
-    RenderModule.forRootAsync(Next({ dev: true})),
   ],
   controllers: [AppController],
   providers: [AppService, NotifyGateway],
