@@ -1,7 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Profile } from '@prisma/client';
 import { Request, Response, NextFunction } from 'express';
 import { DbService } from 'src/db/db.service';
 

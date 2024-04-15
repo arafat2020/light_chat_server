@@ -4,6 +4,7 @@ import { DbService } from 'src/db/db.service';
 import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
 import { ConversationGateway } from './conversation.gateway';
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class ConversationService {
@@ -86,7 +87,7 @@ export class ConversationService {
     }
     // -----------------------------------One to one chat end----------------------------------------
     // -----------------------------------One to one massage create start----------------------------------------
-    async create({ conversationId, user, content, fileUrl }: { conversationId: string, user: Profile, content: string, fileUrl: string | undefined }) {
+    async create({ conversationId, user, content, fileUrl, uuid }: { conversationId: string, user: Profile, content: string, fileUrl: string | undefined, uuid: string }) {
         const conversation = await this.prisma.conversation.findFirst({
             where: {
                 id: conversationId,
@@ -129,6 +130,7 @@ export class ConversationService {
                     fileUrl,
                     conversationId: conversationId,
                     memberId: member.id,
+                    uuid: uuid ? uuid : uuidv4()
                 },
                 include: {
                     member: {
@@ -141,7 +143,7 @@ export class ConversationService {
             this.getWay.boradcastConversation({
                 conversationId: message.conversationId,
                 pyaload: message,
-                type:'create'
+                type: 'create'
             })
             return message
         } catch (error) {
@@ -173,7 +175,7 @@ export class ConversationService {
             this.getWay.boradcastConversation({
                 conversationId: directMessage.conversationId,
                 pyaload: directMessage,
-                type:'update'
+                type: 'update'
             })
             return directMessage
         } catch (error) {
@@ -207,7 +209,7 @@ export class ConversationService {
             this.getWay.boradcastConversation({
                 conversationId: directMessage.conversationId,
                 pyaload: directMessage,
-                type:'delete'
+                type: 'delete'
             })
             return directMessage
         } catch (error) {

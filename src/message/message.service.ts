@@ -4,6 +4,7 @@ import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Member, MemberRole, Message, Profile } from '@prisma/client';
 import { MessageGateway } from './message.gateway';
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class MessageService {
@@ -100,15 +101,15 @@ export class MessageService {
         channelId,
         content,
         fileUrl,
-        uuid 
+        uuid
     }: {
-            serverId: string,
-            user: Profile,
-            channelId: string,
-            content: string,
-            fileUrl: string | undefined,
-            uuid:string
-        }) {
+        serverId: string,
+        user: Profile,
+        channelId: string,
+        content: string,
+        fileUrl: string | undefined,
+        uuid: string
+    }) {
         try {
             const member = await this.isServerExistandMemverExist({
                 serverId,
@@ -125,7 +126,7 @@ export class MessageService {
                     fileUrl,
                     channelId: channelId as string,
                     memberId: member.id,
-                    u_id:uuid
+                    u_id: uuid ? uuid : uuidv4()
                 },
                 include: {
                     member: {

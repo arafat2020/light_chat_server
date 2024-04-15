@@ -1,19 +1,21 @@
-import { Module } from '@nestjs/common';
+import { Module, } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { NotifyGateway } from './notify/notify.gateway';
 import { AuthModule } from './auth/auth.module';
 import { LibModule } from './lib/lib.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServerModule } from './server/server.module';
 import { EmailModule } from './email/email.module';
 import { ChannelModule } from './channel/channel.module';
 import { MemberModule } from './member/member.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { UpdateModule } from './update/update.module';
+import { RenderModule } from 'nest-next';
+import Next from 'next';
 
 
 @Module({
@@ -24,7 +26,7 @@ import { UpdateModule } from './update/update.module';
     AuthModule,
     LibModule,
     ConfigModule.forRoot({
-      isGlobal:true
+      isGlobal: true
     }),
     ServerModule,
     EmailModule,
@@ -32,9 +34,10 @@ import { UpdateModule } from './update/update.module';
     MemberModule,
     MessageModule,
     ConversationModule,
-    UpdateModule
+    UpdateModule,
+    RenderModule.forRootAsync(Next({ dev: true})),
   ],
   controllers: [AppController],
   providers: [AppService, NotifyGateway],
 })
-export class AppModule {}
+export class AppModule { }

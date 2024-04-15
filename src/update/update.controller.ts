@@ -7,6 +7,6 @@ export class UpdateController {
 
     @Get('conversetion-uuid')
     get(){
-        return this.conversetionService.update()
+        return 'restricted'
     }
 }

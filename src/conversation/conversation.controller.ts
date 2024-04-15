@@ -40,7 +40,8 @@ export class ConversationController {
             content: credential.content,
             conversationId: credential.conversationId,
             fileUrl: credential.fileUrl,
-            user:req.user
+            user: req.user,
+            uuid: credential.uuid
         })
     }
 
@@ -48,8 +49,8 @@ export class ConversationController {
     @ApiBearerAuth()
     update(@Body(new ValidationPipe) credential: ConversationDTO_update) {
         return this.conversetionService.update({
-            content:credential.content,
-            directMessageId:credential.directMessageId
+            content: credential.content,
+            directMessageId: credential.directMessageId
         })
     }
 
@@ -57,7 +58,7 @@ export class ConversationController {
     @ApiBearerAuth()
     delete(@Body(new ValidationPipe) credential: ConversationDTO_delete) {
         return this.conversetionService.delete({
-            directMessageId:credential.directMessageId
+            directMessageId: credential.directMessageId
         })
     }
 

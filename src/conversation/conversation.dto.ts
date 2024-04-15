@@ -34,6 +34,12 @@ export class ConversationMessageDTO {
         description:'Link of a file that you want to share'
     })
     fileUrl: string | undefined
+
+    @ApiProperty({
+        description:"UUID of the message"
+    })
+    @IsNotEmpty()
+    uuid: string
 }
 
 export class ConversationDTO_update {
