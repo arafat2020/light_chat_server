@@ -6,6 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+ 
   const config = new DocumentBuilder()
     .setTitle('Light Chat Server')
     .setDescription('A Backend Massaging Server')
@@ -19,7 +20,7 @@ async function bootstrap() {
   app.enableCors({
     origin:'http://localhost:3000'
   })
-  app.use(express.static('client'))
-  await app.listen(3000);
+  await app.use(express.static('.next'))
+  await app.listen(5000);
 }
 bootstrap();

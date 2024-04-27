@@ -19,7 +19,7 @@ import { UpdateModule } from './update/update.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
+      rootPath: join(__dirname, '..', '.next'),
     }),
     AuthModule,
     LibModule,
