@@ -17,9 +17,7 @@ export class DbService extends PrismaClient{
         try {
             await this.$connect()
         } catch (error) {
-            throw new HttpException({
-                msg: 'Faild to make connection with database'
-            }, HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new Error("Db not connected")
         }
     }
 }

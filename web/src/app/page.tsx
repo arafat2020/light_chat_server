@@ -1,10 +1,11 @@
 "uae client"
-import { UserButton } from "@clerk/nextjs";
+
+import Nav from "@/components/Nav"
 
 export default async function Home() {
   return (
     <div className="h-full w-fll">
-      <UserButton afterSignOutUrl="/" />
+      <Nav/>
     </div>
   )
 }

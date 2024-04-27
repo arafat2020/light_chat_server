@@ -20,7 +20,7 @@ async function bootstrap() {
   app.enableCors({
     origin:'http://localhost:3000'
   })
-  await app.use(express.static('.next'))
+  // await app.use(express.static('.next'))
   await app.listen(5000);
 }
 bootstrap();
