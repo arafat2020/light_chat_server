@@ -1,12 +1,13 @@
 "use client"
 import { UserButton } from '@clerk/nextjs'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { PersonIcon } from '@radix-ui/react-icons';
+import { MeContext } from '@/app/(main)/me/page';
 
 
 
 const homeMenu = [
-  { name: 'onlien' },
+  { name: 'online' },
   { name: 'All' },
   { name: 'Pending' },
   { name: 'Blocked' },
@@ -15,7 +16,7 @@ const homeMenu = [
 
 
 function Nav() {
-  const [menu, setMenu] = useState<string>()
+  const { setType,type } = useContext(MeContext)
   return (
     <div className='w-full h-[50px] flex p-3'>
       <div className='flex-grow flex'>
@@ -27,7 +28,7 @@ function Nav() {
           {
             homeMenu.map((e) => {
               return <button
-                onClick={() => setMenu(e.name)}
+                onClick={() => setType && setType(e.name)}
                 className='cursor-pointer'>
                 {e.name}
               </button>

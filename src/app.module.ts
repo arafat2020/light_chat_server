@@ -1,7 +1,6 @@
 import { Module, } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { NotifyGateway } from './notify/notify.gateway';
 import { AuthModule } from './auth/auth.module';
 import { LibModule } from './lib/lib.module';
@@ -12,15 +11,11 @@ import { ChannelModule } from './channel/channel.module';
 import { MemberModule } from './member/member.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
-import { join } from 'path';
-import { UpdateModule } from './update/update.module';
+import { FriendModule } from './friend/friend.module';
 
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '.next'),
-    }),
     AuthModule,
     LibModule,
     ConfigModule.forRoot({
@@ -32,6 +27,7 @@ import { UpdateModule } from './update/update.module';
     MemberModule,
     MessageModule,
     ConversationModule,
+    FriendModule,
   ],
   controllers: [AppController],
   providers: [AppService, NotifyGateway],

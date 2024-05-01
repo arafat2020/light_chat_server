@@ -30,6 +30,9 @@ model Profile {
   updatedAt DateTime     @updatedAt
   passward  String?
   providor  ProvidorType @default(NATIVE)
+  from      Friend[]     @relation("From")
+  to        Friend[]     @relation("To")
+  isaActive Boolean      @default(false)
 }
 
 model Server {
@@ -74,7 +77,7 @@ model Member {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  isaActive Boolean @default(false)
+  isaActive Boolean  @default(false)
 
   @@index([profileId])
   @@index([serverId])
@@ -142,11 +145,27 @@ model Conversation {
   @@index([memberTwoId])
 }
 
+model Friend {
+  id String @id @map("_id")
+
+  fromId String
+  from   Profile @relation("From", fields: [fromId], references: [id], onDelete: Cascade)
+
+  toId String
+  to   Profile @relation("To", fields: [toId], references: [id], onDelete: Cascade)
+
+  acceepted Boolean @default(false)
+  blocked   Boolean @default(false)
+
+  @@unique([fromId, toId])
+  @@index([fromId])
+}
+
 model DirectMessage {
   id      String  @id @map("_id")
   content String
   fileUrl String?
-  uuid    String @unique
+  uuid    String  @unique
 
   memberId String
   member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)

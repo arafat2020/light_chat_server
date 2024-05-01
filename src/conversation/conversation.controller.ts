@@ -33,6 +33,14 @@ export class ConversationController {
         })
     }
 
+    @Get("get/all")
+    @ApiBearerAuth()
+    getAll(@Request() req) {
+        return this.conversetionService.getAllConversetion({
+            user: req.user
+        })
+    }
+
     @Post('create')
     @ApiBearerAuth()
     create(@Body(new ValidationPipe) credential: ConversationMessageDTO, @Request() req) {

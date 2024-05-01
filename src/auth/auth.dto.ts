@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, isNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProvidorType } from '@prisma/client';
 
@@ -99,4 +99,53 @@ export class HeaderDto {
     user:object
   
   }
+
+  export class EneterFromDfermtProvidor {
+
+    @ApiProperty({
+        description: 'Name of the new user',
+        required: false,
+    })
+    name: string
+
+    @ApiProperty({
+        description: 'Email of the new user',
+        required: false,
+    })
+    @IsNotEmpty()
+    email: string
+
+    @ApiProperty({
+        description: 'Password of the new user',
+        required: false,
+    })
+    password: string
+
+    @ApiProperty({
+        description: 'UserId of the new user',
+        required: true,
+    })
+    @IsNotEmpty({
+        message: "User Id is Required"
+    })
+    userId: string
+
+    @ApiProperty({
+        description: 'User of the new user. It should be a either img http url or base64 of a image',
+        required: false,
+    })
+    imgUrl: string
+
+    @ApiProperty({
+        description: 'The providor usese for authentication',
+        required: true,
+        default:ProvidorType.NATIVE
+    })
+    @IsNotEmpty({
+        message: "Providor Is required"
+    })
+    providor: ProvidorType
+    
+}
+
 

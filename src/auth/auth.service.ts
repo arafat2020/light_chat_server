@@ -78,5 +78,27 @@ export class AuthService {
         }
     }
 
+    async enterFromDifferentProvider({
+        providers, userId, email, imgUrl, name,
+    }: { name?: string, password?: string, email?: string, imgUrl?: string, userId: string, providers: ProvidorType }) {
+        const isExist = await this.prisma.profile.findUnique({
+            where: {
+                email:email
+            },
+            
+        })
+
+        if (isExist) return {
+            userObj:isExist,
+            access_token: await this.jwt.signAsync(isExist, {
+                secret: this.config.get("JWT_SECRET"),
+                expiresIn: '7d'
+            })
+        }
+
+        if ( !email || !imgUrl || !name) throw new HttpException('credential missing', HttpStatus.BAD_REQUEST)
+        return this.signUp(name, "IDLE", email, imgUrl, userId, providers)
+    }
+
 
 }

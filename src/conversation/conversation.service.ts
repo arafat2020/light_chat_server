@@ -220,4 +220,16 @@ export class ConversationService {
         }
     }
     // -----------------------------------One to one massage delete end----------------------------------------
+    // -----------------------------------get all conversetion start----------------------------------------
+    async getAllConversetion({user}:{user:Profile}){
+        return this.prisma.conversation.findMany({
+            where:{
+                OR:[
+                    {memberOneId:user.id},
+                    {memberTwoId:user.id}
+                ]
+            }
+        })
+    }
+    // -----------------------------------get all conversetion end----------------------------------------
 }

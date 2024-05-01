@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
-import { HeaderDto, SignInDTO, SignUpDTO } from './auth.dto';
+import { EneterFromDfermtProvidor, HeaderDto, SignInDTO, SignUpDTO } from './auth.dto';
 import { ValidationPipe } from './validation.pipe';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
@@ -18,6 +18,18 @@ export class AuthController {
     @Post('signIn')
     signIn(@Body(new ValidationPipe) signUp: SignInDTO) {
         return this.authService.signIn(signUp.email, signUp.password)
+    }
+
+    @Post('enter')
+    signInorSignUp(@Body(new ValidationPipe) credential: EneterFromDfermtProvidor) {
+        return this.authService.enterFromDifferentProvider({
+            providers: credential.providor,
+            userId: credential.userId,
+            email: credential.email,
+            imgUrl: credential.imgUrl,
+            name: credential.name,
+            password: credential.password
+        })
     }
 
     @UseGuards(AuthGuard)
