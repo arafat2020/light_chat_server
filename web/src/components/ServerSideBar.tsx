@@ -7,11 +7,11 @@ import axios from "@/lib/ChatClient"
 import { ScrollArea } from './ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Skeleton } from './ui/skeleton';
-import { io } from "socket.io-client";
 
 
 function ServerSideBar() {
   const { loading, token, ws,user } = useContext(ChatContext)
+ 
   if (loading) {
     return <div className='w-[85px] h-full bg-zinc-900 shadow-zinc-900 shadow-lg'>
       <IoLogoIonitron size={50} className='w-[90%] m-auto mt-3 cursor-pointer text-slate-500 transition hover:bg-cyan-300 hover:rounded-lg hover:text-slate-600 ' />
@@ -32,7 +32,7 @@ function ServerSideBar() {
     ws && ws("connect", token).on("me",(socket)=>{
       console.log(socket)
     })
-  }, [])
+  }, [loading])
   const { data, error, isLoading } = useQuery({
     queryKey: ["server"],
     queryFn: () => {

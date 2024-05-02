@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { ChatContext } from '@/context/providor';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
-import { socket } from '@/lib/ChatClient';
+import { socket, baseUrl2 } from '@/lib/ChatClient';
 
 
 function Wraper({ children }: { children: React.ReactNode }) {
@@ -14,7 +14,7 @@ function Wraper({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(true)
   const [me, setME] = useState<unknown>(true)
   useEffect(() => {
-    user && axios.post("http://localhost:5000/auth/enter", {
+    user && axios.post(`${baseUrl2}/auth/enter`, {
       providor: "GOOGLE",
       userId: user.id,
       email: user.emailAddresses[0].emailAddress,
@@ -29,6 +29,7 @@ function Wraper({ children }: { children: React.ReactNode }) {
       setME(res.data.userObj)
     }).catch(err => {
       console.log(err);
+      throw new Error(err)
     }).finally(() => setLoading(false))
   }, [user])
 

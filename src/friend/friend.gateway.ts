@@ -60,6 +60,7 @@ export class FriendGateway {
     Logger.log("connected client", client.id,)
     const user = client.handshake.headers["user"] as unknown as Profile
     const friendList: Profile[] = []
+   try {
     const active = await this.prisma.profile.update({
       where: {
         id: user.id
@@ -99,6 +100,9 @@ export class FriendGateway {
         active: true
       })
     })
+   } catch (error) {
+    Logger.log(error)
+   }
   }
 
   async handleDisconnect(client: Socket) {
@@ -106,41 +110,45 @@ export class FriendGateway {
     const friendList: Profile[] = []
 
     const user = client.handshake.headers["user"] as unknown as Profile
-    const inactive = await this.prisma.profile.update({
-      where: {
-        id: user.id
-      },
-      data: {
-        isaActive: false
-
-      }, select: {
-        id: true,
-        from: {
-          where: {
-            acceepted: true
-          },
-          select: {
-            to: true,
-          }
+    try {
+      const inactive = await this.prisma.profile.update({
+        where: {
+          id: user.id
         },
-        to: {
-          where: {
-            acceepted: true
+        data: {
+          isaActive: false
+  
+        }, select: {
+          id: true,
+          from: {
+            where: {
+              acceepted: true
+            },
+            select: {
+              to: true,
+            }
           },
-          select: {
-            from: true,
-          }
-        },
-      }
-    })
-    Logger.log(inactive.id, "dsiconnected")
-    await inactive.from.map(e => friendList.push(e.to))
-    await inactive.to.map(e => friendList.push(e.from))
-    friendList.map(e => {
-      e.isaActive && this.server.emit(e.id, {
-        userid: e.id,
-        active: false
+          to: {
+            where: {
+              acceepted: true
+            },
+            select: {
+              from: true,
+            }
+          },
+        }
       })
-    })
+      Logger.log(inactive.id, "dsiconnected")
+      await inactive.from.map(e => friendList.push(e.to))
+      await inactive.to.map(e => friendList.push(e.from))
+      friendList.map(e => {
+        e.isaActive && this.server.emit(e.id, {
+          userid: e.id,
+          active: false
+        })
+      })
+    } catch (error) {
+      Logger.log(error)
+    }
   }
 }
