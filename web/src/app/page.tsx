@@ -14,6 +14,5 @@ export default function Home() {
       <IoLogoIonitron size={150} className=' text-slate-500 animate-ping' />
     </div>
   )
-
   push("/me")
 }

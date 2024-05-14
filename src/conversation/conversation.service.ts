@@ -81,8 +81,6 @@ export class ConversationService {
 
         if (!conversation) return await createNewConversation(memberOneId, memberTwoId);
 
-        console.log(conversation)
-
         return conversation;
     }
     // -----------------------------------One to one chat end----------------------------------------

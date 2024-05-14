@@ -5,7 +5,7 @@ export const baseUrl2 = "https://didactic-rotary-phone-g6757gg79w729gr5-5000.app
 export const socket = (
     path: "connect", token: string
 ) => {
-    return io(`${baseUrl2}/${path}`, {
+    return io(`${baseURL}/${path}`, {
         auth: {
             authorization: `Bearer ${token}`,
         },
@@ -14,6 +14,6 @@ export const socket = (
     })
 }
 export default axios.create({
-    baseURL:baseUrl2
+    baseURL:baseURL
 })
 

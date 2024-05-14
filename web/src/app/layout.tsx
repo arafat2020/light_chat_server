@@ -5,16 +5,17 @@ import { useEffect, useState } from 'react';
 import { ChatContext } from '@/context/providor';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
-import { socket, baseUrl2 } from '@/lib/ChatClient';
+import { socket, baseUrl2, baseURL } from '@/lib/ChatClient';
 
 
 function Wraper({ children }: { children: React.ReactNode }) {
   const [token, setToekn] = useState<string>("")
-  const { user } = useUser()
+  const { user,isLoaded } = useUser()
   const [loading, setLoading] = useState<boolean>(true)
-  const [me, setME] = useState<unknown>(true)
+  const [me, setME] = useState<unknown>()
+  
   useEffect(() => {
-    user && axios.post(`${baseUrl2}/auth/enter`, {
+    user && axios.post(`${baseURL}/auth/enter`, {
       providor: "GOOGLE",
       userId: user.id,
       email: user.emailAddresses[0].emailAddress,

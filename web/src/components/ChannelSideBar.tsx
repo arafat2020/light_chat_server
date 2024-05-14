@@ -14,9 +14,13 @@ import { ScrollArea } from './ui/scroll-area';
 import { useQuery } from '@tanstack/react-query';
 import axios from '@/lib/ChatClient'
 import { ChatContext } from '@/context/providor';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Skeleton } from './ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 function ChannelSideBar() {
-  const { token, loading } = useContext(ChatContext)
+  const { push } = useRouter()
+  const { token, loading, user } = useContext(ChatContext)
   if (loading) {
     return <div className='w-[280px] h-full shadow-zinc-900 shadow-lg'>
 
@@ -25,7 +29,7 @@ function ChannelSideBar() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["Chennels"],
     queryFn: () => {
-      return axios.get("/conversation/get/all", {
+      return axios.get("/chat/get/all", {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -33,6 +37,7 @@ function ChannelSideBar() {
       })
     }
   })
+  console.log(data, error);
 
   return (
     <div className='w-[280px] h-full shadow-zinc-900 shadow-lg'>
@@ -66,6 +71,23 @@ function ChannelSideBar() {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+        </div>
+        <div className='w-full flex flex-col'>
+          {data?.data.map((e: any) => {
+            return <div
+              onClick={() => {
+                push(`me?chatID=${e.id}&userOne=${e.userOne.id}&userTwo=${e.userTwo.id}`)
+              }}
+              className='w-[90%] flex ml-[10px] space-x-5 items-center cursor-pointer'>
+              <Avatar className='w-[35px] h-[35px]'>
+                <AvatarImage src={e.userOneId === user.id ? e.userTwo.imageUrl : e.userOne.imageUrl} />
+                <AvatarFallback className='bg-slate-500'>
+                  <Skeleton className='w-[30px] h-[30px] rounded-full bg-slate-600' />
+                </AvatarFallback>
+              </Avatar>
+              <p className='font-sans font-semibold text-[15px] text-slate-400'>{e.userOneId === user.id ? e.userTwo.name : e.userTwo.name}</p>
+            </div>
+          })}
         </div>
       </ScrollArea>
     </div>

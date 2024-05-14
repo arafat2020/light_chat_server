@@ -116,8 +116,8 @@ export class FriendGateway {
           id: user.id
         },
         data: {
-          isaActive: false
-  
+          isaActive: false,
+          lastSeen: new Date().toISOString()
         }, select: {
           id: true,
           from: {

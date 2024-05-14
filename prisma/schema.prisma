@@ -16,23 +16,27 @@ enum ProvidorType {
 }
 
 model Profile {
-  id       String @id @map("_id")
-  userId   String @unique
+  id       String   @id @map("_id")
+  userId   String   @unique
   name     String
   imageUrl String
-  email    String @unique
+  email    String   @unique
+  lastSeen DateTime?
 
   servers  Server[]
   members  Member[]
   channels Channel[]
 
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  passward  String?
-  providor  ProvidorType @default(NATIVE)
-  from      Friend[]     @relation("From")
-  to        Friend[]     @relation("To")
-  isaActive Boolean      @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  passward          String?
+  providor          ProvidorType        @default(NATIVE)
+  from              Friend[]            @relation("From")
+  to                Friend[]            @relation("To")
+  isaActive         Boolean             @default(false)
+  roomInitiated     SingleChat[]        @relation("userOne")
+  roomReceived      SingleChat[]        @relation("userTwo")
+  SingleRoomMessage SingleRoomMessage[]
 }
 
 model Server {
@@ -145,6 +149,20 @@ model Conversation {
   @@index([memberTwoId])
 }
 
+model SingleChat {
+  id String @id @map("_id")
+
+  userOneId String
+  userOne   Profile @relation("userOne", fields: [userOneId], references: [id], onDelete: Cascade)
+
+  userTwoId         String
+  userTwo           Profile             @relation("userTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
+  SingleRoomMessage SingleRoomMessage[]
+
+  @@unique([userOneId, userTwoId])
+  @@index([userTwoId])
+}
+
 model Friend {
   id String @id @map("_id")
 
@@ -180,4 +198,22 @@ model DirectMessage {
 
   @@index([memberId])
   @@index([conversationId])
+}
+
+model SingleRoomMessage {
+  id           String     @id @map("_id")
+  content      String
+  fileUrl      String?
+  uuid         String     @unique
+  userId       String
+  member       Profile    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  singleChatId String
+  singlechat   SingleChat @relation(fields: [singleChatId], references: [id], onDelete: Cascade)
+  deleted      Boolean    @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([singleChatId])
 }

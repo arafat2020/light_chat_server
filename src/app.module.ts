@@ -12,6 +12,7 @@ import { MemberModule } from './member/member.module';
 import { MessageModule } from './message/message.module';
 import { ConversationModule } from './conversation/conversation.module';
 import { FriendModule } from './friend/friend.module';
+import { ChatModule } from './chat/chat.module';
 
 
 @Module({
@@ -28,6 +29,7 @@ import { FriendModule } from './friend/friend.module';
     MessageModule,
     ConversationModule,
     FriendModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, NotifyGateway],

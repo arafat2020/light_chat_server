@@ -14,12 +14,11 @@ function ActiveFriends() {
   const { push } = useRouter()
   const conversetion = useMutation({
     mutationFn: (credential: {
-      memberOneId: string,
-      memberTwoId: string
+      userOneId: string,
+      userTwoId: string
     }) => {
-      console.log(credential);
-      
-      return axiso.post("/conversation/get", credential, {
+      console.log(credential)
+      return axiso.post("/chat/get", credential, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -27,8 +26,10 @@ function ActiveFriends() {
       })
     },
     onSuccess: async (res) => {
+      console.log(res);
+      
       await query.invalidateQueries({ queryKey: ["Chennels"] })
-      push(`/?conversetionID=${res.data.id}`)
+      push(`/me?chatID=${res.data.id}`)
     }
   })
   const { error, data, status, refetch } = useQuery({
@@ -55,7 +56,7 @@ function ActiveFriends() {
   function ActiveFriend({ e }: { e: any }
   ) {
     return <div
-      onClick={() => conversetion.mutate({ memberOneId: user.id, memberTwoId: e.id })}
+      onClick={() => conversetion.mutate({ userOneId: user.id, userTwoId: e.id })}
       className='w-[90%] flex ml-[10px] space-x-5 items-center cursor-pointer'>
       <Avatar className='w-[35px] h-[35px]'>
         <AvatarImage src={e.imageUrl} />

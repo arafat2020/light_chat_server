@@ -1,17 +1,18 @@
 "use client"
 import { ChatContext } from '@/context/providor';
 import { useQuery } from '@tanstack/react-query';
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { IoLogoIonitron } from "react-icons/io";
 import axios from "@/lib/ChatClient"
 import { ScrollArea } from './ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Skeleton } from './ui/skeleton';
+import { useRouter } from 'next/navigation';
 
 
 function ServerSideBar() {
-  const { loading, token, ws,user } = useContext(ChatContext)
- 
+  const { loading, token, ws, user } = useContext(ChatContext)
+
   if (loading) {
     return <div className='w-[85px] h-full bg-zinc-900 shadow-zinc-900 shadow-lg'>
       <IoLogoIonitron size={50} className='w-[90%] m-auto mt-3 cursor-pointer text-slate-500 transition hover:bg-cyan-300 hover:rounded-lg hover:text-slate-600 ' />
@@ -27,10 +28,10 @@ function ServerSideBar() {
       </ScrollArea>
     </div>
   }
-
-  useEffect(() => {    
-    ws && ws("connect", token).on("me",(socket)=>{
-      console.log(socket)
+  const [active, setactive] = useState<boolean>(false)
+  useEffect(() => {
+    ws && ws("connect", token).on("me", (socket) => {
+      setactive(true)
     })
   }, [loading])
   const { data, error, isLoading } = useQuery({
@@ -44,9 +45,15 @@ function ServerSideBar() {
       })
     },
   })
+  const { push } = useRouter()
   return (
     <div className='w-[85px] h-full bg-zinc-900 shadow-zinc-900 shadow-lg'>
-      <IoLogoIonitron size={50} className='w-[90%] m-auto mt-3 cursor-pointer text-cyan-500 transition hover:bg-cyan-300 hover:rounded-lg hover:text-slate-600 ' />
+      <div className='w-full relative'>
+        <IoLogoIonitron onClick={() => push('/me')}
+          size={50}
+          className='w-[90%] m-auto mt-3 cursor-pointer text-cyan-500 transition hover:bg-cyan-300 hover:rounded-lg hover:text-slate-600 ' />
+          <div className={`w-[10px] h-[10px] absolute right-[22px] bottom-[3px] ${active?'bg-green-400':'bg-slate-800'} rounded-full border border-zinc-900`}/>
+      </div>
       <hr className='my-3 w-[80%] m-auto border-[1.5px] border-slate-500' />
       {
         isLoading ? <div className='w-full h-4/5 flex justify-between items-center'>
