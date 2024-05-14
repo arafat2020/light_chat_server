@@ -2,12 +2,14 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Profile } from '@prisma/client';
 import { DbService } from 'src/db/db.service';
 import { v4 as uuidv4 } from "uuid";
+import { ChatGateway } from './chat.gateway';
 
 
 @Injectable()
 export class ChatService {
     constructor(
-        private prisma: DbService
+        private prisma: DbService,
+        private chatGetway: ChatGateway
     ) {
         this.prisma.init()
     }
@@ -140,7 +142,11 @@ export class ChatService {
                     userId: user.id
                 }
             })
-
+            await this.chatGetway.broadCastMessage({
+                channelId: message.singleChatId,
+                payload: message,
+                type: 'create'
+            })
             return message
         } catch (error) {
             throw new HttpException({
@@ -152,7 +158,7 @@ export class ChatService {
 
     async update({ singleMessageId, content }: { singleMessageId: string, content: string }) {
         try {
-            return this.prisma.singleRoomMessage.update({
+            const message = await this.prisma.singleRoomMessage.update({
                 where: {
                     id: singleMessageId
                 },
@@ -160,6 +166,12 @@ export class ChatService {
                     content
                 }
             })
+            await this.chatGetway.broadCastMessage({
+                channelId: message.singleChatId,
+                payload: message,
+                type: "update"
+            })
+            return message
         } catch (error) {
             throw new HttpException({
                 msg: 'something went wrong',
@@ -170,7 +182,7 @@ export class ChatService {
 
     async delete({ singleMessageId }: { singleMessageId: string }) {
         try {
-            return this.prisma.singleRoomMessage.update({
+            const message = await this.prisma.singleRoomMessage.update({
                 where: {
                     id: singleMessageId
                 },
@@ -183,6 +195,12 @@ export class ChatService {
                     member: true
                 }
             })
+            await this.chatGetway.broadCastMessage({
+                channelId: message.singleChatId,
+                payload: message,
+                type: "delete"
+            })
+            return message
         } catch (error) {
             throw new HttpException({
                 msg: 'something went wrong',

@@ -1,19 +1,23 @@
 "use client"
 import { ChatContext } from '@/context/providor'
-import { useQuery } from '@tanstack/react-query'
-import React, { useContext } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import React, { RefObject, useContext, useEffect, useRef } from 'react'
 import axios from '@/lib/ChatClient'
 import { useSearchParams } from 'next/navigation'
 import { IoLogoIonitron } from 'react-icons/io'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Skeleton } from './ui/skeleton'
 import { BiSend } from "react-icons/bi";
+import { v4 as uiid } from "uuid"
 
 
 function SIngleChatRoomChat({ id, page = 1 }: { id: string, page?: number }) {
-  const { token, user } = useContext(ChatContext)
+  const { token, user, ws } = useContext(ChatContext)
   const searchParams = useSearchParams()
   console.log(searchParams.get("userOne"));
+  useEffect(() => {
+    ws && ws
+  }, [])
   const { isLoading, data, error } = useQuery({
     queryKey: ["single_room_message"],
     queryFn: () => {
@@ -28,7 +32,8 @@ function SIngleChatRoomChat({ id, page = 1 }: { id: string, page?: number }) {
       })
     }
   })
-  console.log(data?.data, error);
+
+
   function SIngleRommNav({ data }: { data: any }) {
     return (
       <div className='w-full h-[50px] flex justify-between items-center shadow-zinc-900 shadow-lg'>
@@ -44,18 +49,62 @@ function SIngleChatRoomChat({ id, page = 1 }: { id: string, page?: number }) {
       </div>
     )
   }
-  function MessageBody() {
-    return <div className='w-full flex-grow flex flex-col '>
 
+
+  // message Body start
+  function MessageBody() {
+    const { data: msData, isLoading, error } = useQuery({
+      queryKey: ["getmessage"],
+      queryFn: () => {
+        return data?.data && axios.get(`/chat/message/all?singleMessageId=${data.data.id}&page=0`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          }
+        })
+      }
+    })
+    console.log(msData, error);
+    return <div className='w-full flex-grow flex flex-col '>
+      { }
     </div>
   }
+  // message body end
+
+
+
   function MessageInput() {
+    const ref: RefObject<HTMLInputElement> = useRef(null)
+    const sendMessage = useMutation({
+      mutationFn: ({ singleChatId, content, fileUrl, uuid }: { singleChatId: string, content: string, fileUrl?: string, uuid: string }) => {
+        return axios.post('/chat/message/create', { singleChatId, content, fileUrl, uuid }, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          }
+        })
+      },
+      onSuccess: () => {
+
+      }
+    })
+    function submitt() {
+      if (ref.current?.value && data?.data) {
+        sendMessage.mutate({
+          content: ref.current.value,
+          singleChatId: data.data.id,
+          uuid: uiid()
+        })
+        ref.current.value = ""
+      }
+    }
+    console.log(sendMessage.data?.data, sendMessage.error);
     return <div className='w-full flex items-center h-[60px] '>
       <div className='flex-grow h-[90%] p-2'>
-      <input type="text" placeholder='Type to send messaged' className='w-full h-full bg-slate-700 outline-none text-slate-400 rounded-full pl-3 focus:outline-cyan-500 focus:bg-slate-800' />
+        <input ref={ref} type="text" placeholder='Type to send messaged' className='w-full h-full bg-slate-700 outline-none text-slate-400 rounded-full pl-3 focus:outline-cyan-500 focus:bg-slate-800' />
       </div>
       <div className='flex p-2 pr-2'>
-        <button><BiSend size={30} className='text-cyan-500'/></button>
+        <button disabled={sendMessage.isPending} onClick={() => submitt()}><BiSend size={30} className='text-cyan-500' /></button>
       </div>
     </div>
   }
